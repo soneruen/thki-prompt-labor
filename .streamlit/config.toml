@@ -1,0 +1,31 @@
+# Streamlit-Konfiguration – dunkles GitHub-inspiriertes Design (siehe assets/style.css)
+
+[theme]
+base = "dark"
+primaryColor = "#2f81f7"
+backgroundColor = "#0d1117"
+secondaryBackgroundColor = "#161b22"
+codeBackgroundColor = "#161b22"
+textColor = "#e6edf3"
+linkColor = "#58a6ff"
+borderColor = "#30363d"
+showWidgetBorder = true
+showSidebarBorder = true
+baseRadius = "6px"
+buttonRadius = "6px"
+paddingTop = "1rem"
+paddingBottom = "2rem"
+font = "sans-serif"
+codeFont = "monospace"
+baseFontSize = 15
+
+[theme.sidebar]
+backgroundColor = "#010409"
+secondaryBackgroundColor = "#0d1117"
+borderColor = "#21262d"
+
+[client]
+toolbarMode = "minimal"     # blendet „Deploy“ und Entwicklermenü aus
+
+[browser]
+gatherUsageStats = false

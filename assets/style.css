@@ -1,0 +1,270 @@
+/* GitHub-inspiriertes Erscheinungsbild für das THKI Prompt-Labor.
+   Die Theme-Grundfarben kommen aus .streamlit/config.toml; diese Datei
+   ergänzt nur die app-spezifischen Karten, Abstände und Statusfarben. */
+
+:root {
+  --ink: #e6edf3;
+  --ink-2: #8b949e;
+  --blue: #58a6ff;
+  --card: #161b22;
+  --card-raised: #1c2128;
+  --line: #30363d;
+  --line-strong: #484f58;
+  --green: #3fb950;
+  --yellow: #d29922;
+  --red: #f85149;
+}
+
+html, body, [class*="css"], .stApp, .stMarkdown, button, input, textarea {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial,
+               sans-serif !important;
+  -webkit-font-smoothing: antialiased;
+}
+
+.stApp {
+  background: var(--background-color, #0d1117);
+}
+
+.block-container {
+  max-width: 1320px;
+  padding-top: .85rem;
+  padding-bottom: 1.5rem;
+}
+
+h1, h2, h3, h4 {
+  color: var(--ink);
+  letter-spacing: -0.015em;
+}
+
+/* Hero */
+.hero {
+  border-bottom: 1px solid var(--line);
+  padding: 4px 0 13px;
+  margin-bottom: 12px;
+}
+
+.hero .eyebrow {
+  color: var(--blue);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: .75rem;
+  font-weight: 600;
+  letter-spacing: .04em;
+  margin-bottom: 5px;
+}
+
+.hero h1 {
+  font-size: 2.5rem;
+  font-weight: 650;
+  line-height: 1.1;
+  margin: 0 0 6px;
+  padding: 0;
+}
+
+.hero p {
+  color: var(--ink-2);
+  font-size: 1.02rem;
+  line-height: 1.35;
+  margin: 0;
+  max-width: 780px;
+}
+
+/* Karten und Antwortbereiche */
+[class*="st-key-card"] {
+  background: var(--card);
+  border: 1px solid var(--line) !important;
+  border-radius: 6px !important;
+  box-sizing: border-box;
+  box-shadow: none !important;
+  padding: 16px 19px 21px !important;
+}
+
+[class*="st-key-answer"] {
+  background: var(--card);
+  border: 1px solid var(--line) !important;
+  border-radius: 6px !important;
+  box-sizing: border-box;
+  box-shadow: none !important;
+  padding: 10px 12px !important;
+}
+
+[class*="st-key-answer"]:hover,
+[class*="st-key-card"]:hover {
+  border-color: var(--line-strong) !important;
+}
+
+.label {
+  color: var(--ink-2);
+  font-size: .67rem;
+  font-weight: 650;
+  letter-spacing: .07em;
+  margin-bottom: 2px;
+  text-transform: uppercase;
+}
+
+.value {
+  color: var(--ink);
+  font-size: 1rem;
+  margin-bottom: 8px;
+}
+
+.simple {
+  background: #0d2240;
+  border: 1px solid #1f4b7a;
+  border-radius: 6px;
+  box-sizing: border-box;
+  color: #c9e2ff;
+  line-height: 1.4;
+  padding: 11px 13px;
+}
+
+.simple b {
+  color: var(--blue);
+}
+
+.model {
+  color: var(--ink);
+  font-size: .98rem;
+  font-weight: 600;
+}
+
+.meta {
+  color: var(--ink-2);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: .76rem;
+  margin-top: 2px;
+}
+
+.section {
+  border-bottom: 1px solid var(--line);
+  color: var(--ink);
+  font-size: 1.12rem;
+  font-weight: 600;
+  margin: 16px 0 7px;
+  padding-bottom: 5px;
+}
+
+.chip {
+  background: #21262d;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  color: var(--ink-2);
+  display: inline-block;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: .76rem;
+  margin: 0 5px 4px 0;
+  padding: 2px 8px;
+}
+
+/* Status-Badges */
+.badge {
+  border: 1px solid transparent;
+  border-radius: 999px;
+  display: inline-block;
+  font-size: .78rem;
+  font-weight: 600;
+  margin: 3px 0 5px;
+  padding: 2px 8px;
+}
+
+.badge.ok {
+  background: #12261a;
+  border-color: #1f6f35;
+  color: #56d364;
+}
+
+.badge.warn {
+  background: #2b2111;
+  border-color: #8b6b1f;
+  color: #e3b341;
+}
+
+.badge.err {
+  background: #2d1619;
+  border-color: #8e2c35;
+  color: #ff7b72;
+}
+
+.badge.info {
+  background: #21262d;
+  border-color: var(--line);
+  color: var(--ink-2);
+}
+
+/* Controls */
+.stButton > button,
+.stDownloadButton > button {
+  border-radius: 6px !important;
+  font-weight: 600 !important;
+  min-height: 2.15rem;
+  transition: border-color .15s ease, background-color .15s ease;
+}
+
+.stButton > button:hover,
+.stDownloadButton > button:hover {
+  border-color: var(--blue) !important;
+}
+
+.stButton > button[kind="primary"] {
+  box-shadow: none;
+}
+
+textarea,
+input {
+  font-size: .95rem !important;
+  border-radius: 6px !important;
+}
+
+.stTextInput label,
+.stTextArea label,
+.stMultiSelect label,
+.stSelectbox label,
+.stToggle label,
+.stCaption {
+  font-size: .88rem !important;
+}
+
+textarea:focus,
+input:focus {
+  border-color: var(--blue) !important;
+  box-shadow: 0 0 0 3px rgba(47, 129, 247, .2) !important;
+}
+
+/* Tabs and sidebar */
+.stTabs [data-baseweb="tab-list"] {
+  border-bottom: 1px solid var(--line);
+  gap: 4px;
+}
+
+.stTabs [data-baseweb="tab"] {
+  color: var(--ink-2);
+  font-weight: 600;
+  font-size: .92rem;
+  padding: 7px 12px;
+}
+
+.stTabs [aria-selected="true"] {
+  color: var(--ink) !important;
+}
+
+[data-testid="stExpander"] {
+  border: 1px solid var(--line) !important;
+  border-radius: 6px !important;
+  overflow: hidden;
+}
+
+[data-testid="stSidebar"] {
+  border-right: 1px solid var(--line);
+}
+
+[data-testid="stSidebar"] h3 {
+  color: var(--ink-2);
+  font-size: .76rem;
+  letter-spacing: .08em;
+  margin-top: 10px;
+  text-transform: uppercase;
+}
+
+code, pre {
+  border: 1px solid var(--line) !important;
+  border-radius: 6px !important;
+}
