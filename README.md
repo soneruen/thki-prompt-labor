@@ -42,19 +42,77 @@ Es zahlt außerdem auf meine beiden Portfolio-Ziele ein:
 - Über eine einzige, OpenAI-kompatible Schnittstelle lassen sich viele Modelle direkt vergleichen.
 - Es ist die Infrastruktur, die alle TH-Angehörigen nutzen. Die Ergebnisse helfen also anderen Studierenden, die Hochschul-KI kritisch einzusetzen.
 
-## Installation & Start (ein Klick)
+## Erste Nutzung: herunterladen und starten
 
-**VS Code:** `app.py` öffnen und auf ▶ **Run** klicken. **Terminal:** `python app.py`. Unter macOS/Linux ggf. `python3`.
+Voraussetzung ist **Python 3.9 oder neuer**. Für den Start per Mausklick in
+VS Code wird außerdem die offizielle Erweiterung **Python** von Microsoft
+benötigt.
 
-Beim Start prüft `setup_check.py` automatisch, unter Windows, macOS und Linux:
+### Variante A: Repository klonen
 
-1. die Python-Version (mind. 3.9)
-2. die virtuelle Umgebung `.venv`: Sie wird angelegt, falls sie fehlt, und die App startet darin neu
-3. die Pakete aus `requirements.txt`: Fehlende oder zu alte werden installiert
-4. die Datei `.env`: Sie wird angelegt, falls sie fehlt. Ist kein API-Schlüssel eingetragen, fragt das Terminal danach (die Eingabe ist unsichtbar). Mit **q** überspringst du das, dann startet die App im Demo-Modus und du gibst den Schlüssel links in der Seitenleiste ein.
-5. Danach startet die App, und der Browser öffnet sich unter `http://localhost:8501`.
+1. Das Repository auf GitHub öffnen:
+   https://github.com/soneruen/thki-prompt-labor
+2. **Code → HTTPS** auswählen und die URL kopieren.
+3. Im Terminal an den gewünschten Speicherort wechseln und das Projekt klonen:
 
-`.env` steht in `.gitignore` und wird **nie** hochgeladen.
+   ```bash
+   git clone https://github.com/soneruen/thki-prompt-labor.git
+   cd thki-prompt-labor
+   ```
+
+4. Den Ordner in VS Code öffnen:
+
+   ```bash
+   code .
+   ```
+
+### Variante B: ZIP-Datei herunterladen
+
+Auf GitHub **Code → Download ZIP** auswählen, die ZIP-Datei entpacken und den
+entpackten Ordner in VS Code öffnen. Wichtig ist, dass `app.py` direkt im
+geöffneten Projektordner liegt.
+
+### Start per Mausklick
+
+In VS Code die Datei `app.py` öffnen und oben rechts auf **▶ Run Python File**
+(*Python-Datei ausführen*) klicken. Beim ersten Start erledigt das Projekt
+automatisch:
+
+1. Betriebssystem und Python-Version prüfen (Windows, macOS und Linux)
+2. die virtuelle Umgebung `.venv` anlegen
+3. alle Pakete aus `requirements.txt` installieren
+4. `.env` lokal anlegen und optional nach dem THKI-API-Schlüssel fragen
+5. die Streamlit-App starten und den Browser öffnen
+
+Beim ersten Start kann die Paketinstallation etwas dauern. Danach genügt es,
+`app.py` erneut zu öffnen und wieder auf den Run-Button zu klicken.
+
+### Start über das Terminal
+
+Falls der Run-Button in VS Code nicht angezeigt wird:
+
+```bash
+python app.py
+```
+
+Unter macOS/Linux funktioniert alternativ:
+
+```bash
+python3 app.py
+```
+
+`setup_check.py` erkennt das Betriebssystem selbst und verwendet automatisch
+den passenden Pfad für die virtuelle Umgebung. Die App öffnet sich danach
+unter `http://localhost:8501`.
+
+Wenn kein API-Schlüssel vorhanden ist, kann die Abfrage mit **Enter** oder
+`q` übersprungen werden. Die App startet dann im Demo-Modus; ein Schlüssel
+kann später links in der Seitenleiste eingegeben werden. `.env` steht in
+`.gitignore` und wird nie hochgeladen.
+
+## Manuelle Installation
+
+Falls der automatische Start nicht verwendet werden soll:
 
 <details><summary>Manuell, ohne Startprüfung</summary>
 
