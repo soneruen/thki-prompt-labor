@@ -297,9 +297,9 @@ class FakeClient:
             self.__dict__.update(kw)
 
     def __init__(self):
-        O = self._Obj
-        self.models = O(list=lambda: O(data=[O(id="demo-modell-a"), O(id="demo-modell-b")]))
-        self.chat = O(completions=O(create=self._create))
+        obj = self._Obj
+        self.models = obj(list=lambda: obj(data=[obj(id="demo-modell-a"), obj(id="demo-modell-b")]))
+        self.chat = obj(completions=obj(create=self._create))
 
     def _create(self, model, messages, **kw):
         letzte = messages[-1]["content"]
@@ -380,7 +380,7 @@ def bericht_text(ergebnisse, modelle=None, bewertungen=None):
         modelle = sorted({r["modell"] for liste in ergebnisse.values() for r in liste})
     z = []
     z.append("# THKI Prompt-Labor – Versuchsbericht\n")
-    z.append(f"Necdet Soner Ünal · ASC-Lernportfolio (DIS20a) · {datetime.now():%d.%m.%Y %H:%M}\n")
+    z.append(f"Necdet Soner Ünal · ASC-Lernportfolio (DIS20a) · {datetime.now().astimezone():%d.%m.%Y %H:%M}\n")
     z.append(f"**Modelle:** {', '.join(modelle)}  ")
     z.append("**Einstellungen:** temperature = 0 (wo vom Modell unterstützt; möglichst reproduzierbar)\n")
     for eid, exp in EXPERIMENTE.items():
@@ -457,7 +457,7 @@ def main():
 
     out = Path(__file__).parent / "results"
     out.mkdir(exist_ok=True)
-    stempel = datetime.now().strftime("%Y-%m-%d_%H%M")
+    stempel = datetime.now().astimezone().strftime("%Y-%m-%d_%H%M")
     (out / f"{stempel}_rohdaten.json").write_text(
         json.dumps({"modelle": modelle, "ergebnisse": ergebnisse}, ensure_ascii=False, indent=2), encoding="utf-8")
     bericht = out / f"{stempel}_bericht.md"

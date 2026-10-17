@@ -23,7 +23,6 @@ Ablauf
 
 # --- Imports --------------------------------------------------------------
 import getpass
-import os
 import platform
 import re
 import subprocess
@@ -54,7 +53,7 @@ def schritt(nr, text):
 
 def pruefe_python():
     schritt(1, "Python-Version")
-    if sys.version_info < (3, 9):
+    if sys.version_info < (3, 9):  # noqa: UP036 – Laufzeitschutz für zu alte Python-Versionen
         sys.exit(f"  ✗ Python {platform.python_version()} ist zu alt – bitte Python 3.9 oder neuer installieren.")
     info(f"✓ Python {platform.python_version()} ({platform.system()})")
 
@@ -98,6 +97,8 @@ def fehlende_pakete():
         if not zeile:
             continue
         m = re.match(r"([A-Za-z0-9_.\-]+)\s*(?:>=\s*([\d.]+))?", zeile)
+        if not m:  # unbekanntes Format (z. B. Git-URL) – nicht prüfbar, überspringen
+            continue
         name, mindest = m.group(1), m.group(2)
         try:
             installiert = metadata.version(name)

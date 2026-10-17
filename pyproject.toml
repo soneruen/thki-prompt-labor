@@ -1,0 +1,19 @@
+# Projekt- und Linter-Konfiguration (Ruff, auch von der VS-Code-Erweiterung genutzt)
+
+[project]
+name = "thki-prompt-labor"
+version = "1.0.0"
+description = "Versuchslabor zum kritischen Vergleich von THKI-Sprachmodellen (ASC-Lernportfolio, TH Köln)"
+requires-python = ">=3.9"
+
+[tool.ruff]
+line-length = 120
+target-version = "py39"
+extend-exclude = [".venv", "results"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "B", "UP", "SIM", "DTZ"]
+ignore = [
+    "E501",  # lange Prompt-Texte in EXPERIMENTE bleiben bewusst einzeilig lesbar
+    "B905",  # zip(strict=...) erst ab Python 3.10, Projekt unterstützt 3.9
+]

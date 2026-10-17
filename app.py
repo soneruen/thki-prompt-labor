@@ -249,7 +249,7 @@ with tab_exp:
         st.write("")
         bericht = bericht_text(ss.ergebnisse, bewertungen=ss.bewertungen)  # Modelle aus Ergebnissen
         st.download_button(f"Bericht herunterladen · {len(ss.ergebnisse)} Experiment(e)", bericht,
-                           file_name=f"{datetime.now():%Y-%m-%d_%H%M}_bericht.md", mime="text/markdown")
+                           file_name=f"{datetime.now().astimezone():%Y-%m-%d_%H%M}_bericht.md", mime="text/markdown")
 
 # --- Tab 2: Freier Modus --------------------------------------------------
 with tab_frei:
