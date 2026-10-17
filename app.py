@@ -20,7 +20,8 @@ Aufbau
                  automatische Prüfung, Bewertung (Beobachtung / Vor- und
                  Nachteile / Fazit), Bericht als Markdown herunterladen
   Tab 2          Freier Modus: eigener Prompt gegen mehrere Modelle
-  Tab 3          Über das Projekt (Kontext, Kompetenzen, Datenschutz)
+  Tab 3          Laientest: drei Fragen zur Verständlichkeit und Erklärbarkeit
+  Tab 4          Über das Projekt (Kontext, Kompetenzen, Datenschutz)
 
 Start:  Run-Button in VS Code oder „python app.py“ – prüft beim Start
         automatisch Python, .venv, Pakete und .env (fragt ggf. nach dem
@@ -71,6 +72,7 @@ ss = st.session_state
 ss.setdefault("ergebnisse", {})     # {eid: [ergebnis, ...]}
 ss.setdefault("bewertungen", {})    # {eid: {beobachtung, vorteile, fazit}}
 ss.setdefault("frei", [])           # Ergebnisse des freien Modus
+ss.setdefault("laientest", {})      # Antworten aus dem Verständlichkeitstest
 MAX_MODELLE = 4
 KURZ = {"E1": "Modellvergleich", "E2": "Klarheit", "E3": "Prompt-Injection",
         "E4": "JSON", "E5": "Halluzination", "E6": "Priming"}   # kurze Tab-Namen
@@ -179,8 +181,11 @@ with st.sidebar:
         fortschritt.progress(1.0, text="Fertig")
         if fehler_gesamt:
             st.warning(f"{fehler_gesamt} Anfrage(n) fehlgeschlagen – Details bei den Antworten.")
-    if st.button("Ergebnisse zurücksetzen", disabled=not ss.ergebnisse, width="stretch"):
-        ss.ergebnisse, ss.bewertungen, ss.frei = {}, {}, []
+    if st.button("Ergebnisse zurücksetzen", disabled=not (ss.ergebnisse or ss.bewertungen or ss.frei or ss.laientest),
+                 width="stretch"):
+        ss.ergebnisse, ss.bewertungen, ss.frei, ss.laientest = {}, {}, [], {}
+        for key in ("laientest_unklar", "laientest_aufbau", "laientest_weiter"):
+            ss.pop(key, None)
         st.rerun()
     st.divider()
     st.caption("Keine personenbezogenen oder vertraulichen Daten eingeben.")
@@ -198,7 +203,8 @@ if not modelle:
     st.info("Bitte links mindestens ein Modell auswählen.")
     st.stop()
 
-tab_exp, tab_frei, tab_info = st.tabs(["Experimente", "Freier Modus", "Über das Projekt"])
+tab_exp, tab_frei, tab_laientest, tab_info = st.tabs(
+    ["Experimente", "Freier Modus", "Laientest", "Über das Projekt"])
 
 # --- Tab 1: Experimente ---------------------------------------------------
 with tab_exp:
@@ -246,9 +252,9 @@ with tab_exp:
             b["vorteile"] = st.text_area("Vor- und Nachteile", b.get("vorteile", ""), key=f"vn_{eid}")
             b["fazit"] = st.text_area("Fazit", b.get("fazit", ""), key=f"fa_{eid}")
 
-    if ss.ergebnisse:
+    if ss.ergebnisse or ss.laientest:
         st.write("")
-        bericht = bericht_text(ss.ergebnisse, bewertungen=ss.bewertungen)  # Modelle aus Ergebnissen
+        bericht = bericht_text(ss.ergebnisse, bewertungen=ss.bewertungen, laientest=ss.laientest)
         st.download_button(f"Bericht herunterladen · {len(ss.ergebnisse)} Experiment(e)", bericht,
                            file_name=f"{datetime.now().astimezone():%Y-%m-%d_%H%M}_bericht.md", mime="text/markdown")
 
@@ -272,7 +278,47 @@ with tab_frei:
         st.write("")
         zeige_antworten(ss.frei, "frei")
 
-# --- Tab 3: Über das Projekt ----------------------------------------------
+# --- Tab 3: Laientest ------------------------------------------------------
+with tab_laientest:
+    with st.container(key="card_laientest"):
+        st.markdown("## Laientest des Prompt-Labors")
+        st.markdown(
+            "Lass die App von einer fachfremden Person ausprobieren, zum Beispiel dem "
+            "Familienmitglied aus Feedback IV. Stelle danach die folgenden drei Fragen. "
+            "Die Antworten helfen dabei, Begriffe, Aufbau und Erklärbarkeit zu verbessern."
+        )
+        with st.form("laientest_form"):
+            unklar = st.text_area(
+                "1. Welche Begriffe waren unklar?",
+                value=ss.laientest.get("unklar", ""),
+                key="laientest_unklar",
+                placeholder="Zum Beispiel: „System-Prompt“ oder „Modellvergleich“",
+            )
+            aufbau = st.text_area(
+                "2. Konntest du den Aufbau absehen?",
+                value=ss.laientest.get("aufbau", ""),
+                key="laientest_aufbau",
+                placeholder="Was war von Anfang an verständlich, was überraschend?",
+            )
+            weiter = st.text_area(
+                "3. Kannst du das Prompt-Labor in zwei Sätzen weitererklären?",
+                value=ss.laientest.get("weiter", ""),
+                key="laientest_weiter",
+                placeholder="Erkläre Zweck und Funktionsweise mit deinen eigenen Worten.",
+            )
+            speichern = st.form_submit_button("Antworten speichern", type="primary", width="stretch")
+        if speichern:
+            antworten = {"unklar": unklar.strip(), "aufbau": aufbau.strip(), "weiter": weiter.strip()}
+            if not all(antworten.values()):
+                st.warning("Bitte beantworte alle drei Fragen, damit der Laientest vollständig dokumentiert ist.")
+            else:
+                ss.laientest = antworten
+                st.success("Laientest gespeichert. Die Antworten werden in den Bericht aufgenommen.")
+
+    if ss.laientest:
+        st.caption("Gespeicherte Antworten sind im Bericht-Download unter „Laientest“ enthalten.")
+
+# --- Tab 4: Über das Projekt ----------------------------------------------
 with tab_info, st.container(key="card_about"):
     st.markdown("## Worum geht es?")
     st.markdown("""

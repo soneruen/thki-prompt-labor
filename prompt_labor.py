@@ -396,11 +396,12 @@ def frage(client, modell, messages):
 
 # --- Bericht --------------------------------------------------------------
 
-def bericht_text(ergebnisse, modelle=None, bewertungen=None):
+def bericht_text(ergebnisse, modelle=None, bewertungen=None, laientest=None):
     """Erzeugt den Versuchsbericht als Markdown-Text.
 
     bewertungen: optional {eid: {"beobachtung": .., "vorteile": .., "fazit": ..}}
     (aus der Web-Oberfläche); fehlende Felder bleiben zum Ausfüllen leer.
+    laientest: optional {"unklar": .., "aufbau": .., "weiter": ..} aus der Web-Oberfläche.
     """
     bewertungen = bewertungen or {}
     if not modelle:  # tatsächlich verwendete Modelle aus den Ergebnissen ableiten
@@ -432,6 +433,14 @@ def bericht_text(ergebnisse, modelle=None, bewertungen=None):
         z.append(f"**Beobachtung:** {b.get('beobachtung') or '_…_'}  ")
         z.append(f"**Vor- und Nachteile:** {b.get('vorteile') or '_…_'}  ")
         z.append(f"**Fazit:** {b.get('fazit') or '_…_'}\n")
+    if laientest:
+        z.append("\n## Laientest\n")
+        z.append("**Welche Begriffe waren unklar?**  ")
+        z.append(f"{laientest.get('unklar') or '_…_'}\n")
+        z.append("**Konntest du den Aufbau absehen?**  ")
+        z.append(f"{laientest.get('aufbau') or '_…_'}\n")
+        z.append("**Kannst du das Prompt-Labor in zwei Sätzen weitererklären?**  ")
+        z.append(f"{laientest.get('weiter') or '_…_'}\n")
     z.append("\n---\n")
     z.append("_KI-Kennzeichnung: Die Antworten in diesem Bericht wurden von den genannten "
              "Sprachmodellen über THKI (KI:connect.nrw) erzeugt. Die automatischen Prüfungen "

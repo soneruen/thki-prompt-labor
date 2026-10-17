@@ -138,6 +138,7 @@ Die Oberfläche ist dunkel und kompakt im GitHub-Stil gehalten: klare Rahmen, gu
 - **Seitenleiste:** Hier verbindest du dich mit THKI. Ist kein Schlüssel hinterlegt, startet die App im Demo-Modus mit Testantworten. Dort wählst du auch bis zu 4 Modelle aus, startest mit **Alle Experimente starten** den kompletten Lauf und setzt die Ergebnisse zurück.
 - **Experimente:** E1–E6 auswählen. Jedes Experiment zeigt eine Erklärung in einfacher Sprache, einen Start-Knopf und die Antworten der Modelle nebeneinander mit automatischer Prüfung. Darunter stehen Eingabefelder für *Beobachtung / Vor- und Nachteile / Fazit*. Den Bericht kannst du als Markdown herunterladen.
 - **Freier Modus:** einen eigenen Prompt (optional mit System-Prompt) an alle gewählten Modelle schicken.
+- **Laientest:** Nach dem Ausprobieren durch eine fachfremde Person drei Fragen zu unklaren Begriffen, dem erkennbaren Aufbau und einer Erklärung in zwei Sätzen beantworten. Die gespeicherten Antworten werden in den Bericht übernommen.
 - **Über das Projekt:** Kontext, Kompetenz-Tabelle, Datenschutz, Grenzen.
 
 ### Kommandozeile
@@ -151,7 +152,7 @@ python prompt_labor.py -m <modell1> <modell2> -e E2 E5
 
 Die Ergebnisse landen in `results/`:
 
-- `…_bericht.md`: lesbarer Bericht mit Tabelle pro Experiment, Antworten im Wortlaut und leeren Feldern **Beobachtung / Vor- und Nachteile / Fazit** zum Ausfüllen
+- `…_bericht.md`: lesbarer Bericht mit Tabelle pro Experiment, Antworten im Wortlaut, Bewertungsfeldern **Beobachtung / Vor- und Nachteile / Fazit** und optional dem **Laientest**
 - `…_rohdaten.json`: alle Prompts und Antworten, für die Nachvollziehbarkeit
 
 ## Projektstruktur
