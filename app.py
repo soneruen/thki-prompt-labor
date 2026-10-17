@@ -92,7 +92,8 @@ def verbinde(demo, key, url):
 
 def parallel_fragen(client, auftraege):
     """auftraege: Liste (modell, messages) -> Liste (antwort, sekunden, fehler)."""
-    with ThreadPoolExecutor(max_workers=6) as pool:
+    # max. 2 gleichzeitige Anfragen: THKI begrenzt parallele Anfragen (sonst Fehler 429)
+    with ThreadPoolExecutor(max_workers=2) as pool:
         return list(pool.map(lambda a: frage(client, a[0], a[1]), auftraege))
 
 

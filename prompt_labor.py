@@ -46,7 +46,10 @@ Robustheit gegenüber echten THKI-Modellen
   - Modelle ohne temperature-Unterstützung werden automatisch ohne
     temperature erneut angefragt.
   - Denkschritte von Reasoning-Modellen (<think>…</think>) werden entfernt.
-  - Timeout 120 s und 2 automatische Wiederholungen pro Anfrage; Fehler
+  - Überlastung der THKI (429 zu viele gleichzeitige Anfragen, 503 Dienst
+    vorübergehend nicht verfügbar): bis zu 3 Wiederholungen nach 5/10/20 s;
+    die Web-App sendet höchstens 2 Anfragen gleichzeitig.
+  - Timeout 120 s pro Anfrage; verbleibende Fehler (z. B. 400 vom Anbieter)
     werden protokolliert, statt den Lauf abzubrechen.
 """
 
@@ -207,7 +210,9 @@ UNSICHER_MARKER = ["nicht bekannt", "keine informationen", "nicht finden", "nich
                    "existiert möglicherweise nicht", "kenne ich nicht", "nicht verifizieren",
                    "keine kenntnis", "unbekannt", "erfunden", "nicht existiert", "existiert nicht",
                    "keine studie", "nicht auffindbar", "konnte keine", "kann keine", "nicht ausfindig",
-                   "liegen mir keine", "habe keine", "nicht überprüfen", "möglicherweise fiktiv"]
+                   "liegen mir keine", "habe keine", "nicht überprüfen", "möglicherweise fiktiv",
+                   "nicht verlässlich", "nicht identifizieren", "nicht zuordnen", "taucht nicht auf",
+                   "keinen direkten zugriff", "rekonstruiert"]
 
 
 def bereinige(text):
@@ -277,6 +282,9 @@ def pruefe(check: str, antwort: Optional[str], exp: Experiment):  # noqa: UP045
         return "✅ Schema exakt eingehalten" + hinweis
     if check == "unsicherheit":
         zugegeben = any(m in low for m in UNSICHER_MARKER)
+        woerter = len(text.split())
+        if zugegeben and woerter > 200:
+            return f"⚠️ räumt Unwissen ein, liefert aber trotzdem {woerter} Wörter Inhalt – auf erfundene Details prüfen"
         return "✅ räumt Unwissen ein" if zugegeben else "⚠️ keine Unsicherheit erkennbar – mögliche Halluzination prüfen"
     if check == "entscheidung":
         m = re.search(r"\b(JA|NEIN)\b", text.upper())
@@ -344,21 +352,40 @@ def chat_modelle(client):
     return sorted(i for i in ids if not any(n in i.lower() for n in NICHT_CHAT))
 
 
+WIEDERHOLBAR = ("429", "503", "too many concurrent", "temporarily unavailable")
+WARTEZEITEN = (5, 10, 20)  # Sekunden zwischen den Wiederholungen
+
+
+def _anfrage_mit_wiederholung(client, modell, messages):
+    """Sendet die Anfrage; bei Überlastung der THKI (429 „Too many concurrent
+    requests“, 503 „temporarily unavailable“) wird nach 5, 10 und 20 s erneut
+    versucht. Lehnt ein Modell temperature=0 ab, wird ohne temperature gefragt."""
+    extra = {"temperature": 0}
+    for versuch in range(len(WARTEZEITEN) + 1):
+        try:
+            return client.chat.completions.create(model=modell, messages=messages, **extra)
+        except Exception as e:
+            text = str(e).lower()
+            if "temperature" in text and extra:
+                extra = {}
+                continue
+            if versuch < len(WARTEZEITEN) and any(w in text for w in WIEDERHOLBAR):
+                time.sleep(WARTEZEITEN[versuch])
+                continue
+            raise
+    raise RuntimeError("Anfrage nach mehreren Versuchen fehlgeschlagen")
+
+
 def frage(client, modell, messages):
     """Eine Anfrage an ein Modell -> (antwort, sekunden, fehler).
 
-    temperature=0 für möglichst wiederholbare Antworten. Manche Reasoning-
-    Modelle (z. B. GPT-5) erlauben das nicht – dann wird automatisch ohne
-    temperature wiederholt.
+    temperature=0 für möglichst wiederholbare Antworten (Fallback ohne
+    temperature und Wiederholung bei Überlastung: siehe
+    _anfrage_mit_wiederholung).
     """
     start = time.time()
     try:
-        try:
-            r = client.chat.completions.create(model=modell, messages=messages, temperature=0)
-        except Exception as e:
-            if "temperature" not in str(e).lower():
-                raise
-            r = client.chat.completions.create(model=modell, messages=messages)
+        r = _anfrage_mit_wiederholung(client, modell, messages)
         antwort = bereinige(r.choices[0].message.content)
         if not antwort:
             return None, round(time.time() - start, 1), "leere Antwort vom Modell"
